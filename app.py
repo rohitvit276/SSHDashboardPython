@@ -104,7 +104,7 @@ def display_results(results):
             return 'background-color: #f8d7da; color: #721c24'
     
     # Style the dataframe
-    styled_df = df.style.applymap(style_status, subset=['status'])
+    styled_df = df.style.map(style_status, subset=['status'])
     
     st.dataframe(styled_df, use_container_width=True)
 

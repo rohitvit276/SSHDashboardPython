@@ -140,7 +140,8 @@ class SSHConnectivityChecker:
             
         finally:
             try:
-                ssh.close()
+                if 'ssh' in locals():
+                    ssh.close()
             except:
                 pass
         
