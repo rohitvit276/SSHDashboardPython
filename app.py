@@ -39,6 +39,10 @@ def check_ssh_connectivity(servers, username="", password="", port=22, timeout=1
     total_servers = len(servers)
     completed = 0
     
+    # Ensure we have at least 1 server to avoid division by zero
+    if total_servers == 0:
+        return []
+    
     # Use ThreadPoolExecutor for parallel processing
     with ThreadPoolExecutor(max_workers=min(10, total_servers)) as executor:
         # Submit all tasks
@@ -56,7 +60,7 @@ def check_ssh_connectivity(servers, username="", password="", port=22, timeout=1
                 completed += 1
                 
                 # Update progress
-                progress = completed / total_servers
+                progress = min(1.0, completed / total_servers)
                 progress_bar.progress(progress)
                 status_text.text(f"Checking connectivity... {completed}/{total_servers} completed")
                 
@@ -75,7 +79,7 @@ def check_ssh_connectivity(servers, username="", password="", port=22, timeout=1
                 results.append(error_result)
                 completed += 1
                 
-                progress = completed / total_servers
+                progress = min(1.0, completed / total_servers)
                 progress_bar.progress(progress)
                 status_text.text(f"Checking connectivity... {completed}/{total_servers} completed")
     
@@ -129,7 +133,7 @@ def parse_uploaded_file(uploaded_file):
                 server_col = df.columns[0]
                 st.warning(f"No standard server column found. Using '{server_col}' as server names.")
             
-            if server_col:
+            if server_col is not None:
                 servers = df[server_col].dropna().astype(str).tolist()
                 return [server.strip() for server in servers if server.strip()]
             else:
